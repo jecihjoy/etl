@@ -392,11 +392,15 @@ while @person_ids_count > 0 do
                 END AS height,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> Update OVC Report branch (#224)
 =======
 >>>>>>> Fixed in between care visit issues in surge (#231)
+=======
+
+>>>>>>> Update OVC Report branch (#224)
                 CASE
                     WHEN @prev_id != @cur_id  THEN @weight := weight 
                     WHEN @prev_id = @cur_id and @weight is null and weight is not null THEN @weight := weight
