@@ -1775,11 +1775,13 @@ SELECT @person_ids_count AS 'num patients to sync';
                         set @prev_clinical_location_id = null;
                         set @cur_clinical_location_id = null;
 
+
                         drop table if exists flat_hiv_summary_02;
                         create temporary table flat_hiv_summary_02
                         (select *,
                             @prev_id := @cur_id as prev_id,
                             @cur_id := person_id as cur_id,
+
 
                             case
                                 when @prev_id = @cur_id then @prev_clinical_location_id := @cur_clinical_location_id
@@ -2288,7 +2290,7 @@ SELECT @total_rows_written;
                     set @total_time = @total_time + @cycle_length;
                     set @cycle_number = @cycle_number + 1;
                     
-	
+                    
                     set @remaining_time = ceil((@total_time / @cycle_number) * ceil(@person_ids_count / cycle_size) / 60);
                     
 
