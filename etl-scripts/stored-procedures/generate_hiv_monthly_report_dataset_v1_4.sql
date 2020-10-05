@@ -152,7 +152,6 @@ create table if not exists hiv_monthly_report_dataset_v1_2 (
 				ovc_non_enrolment_out_of_catchment_area tinyint,
 				newly_exited_from_ovc_this_month tinyint,
 				exited_from_ovc_this_month tinyint,
-                                
                 primary key elastic_id (elastic_id),
 				index person_enc_date (person_id, encounter_date),
                 index person_report_date (person_id, endDate),
@@ -240,7 +239,7 @@ SET @dyn_sql=CONCAT('delete t1 from hiv_monthly_report_dataset_v1_2 t1 join ',@q
                 drop temporary table if exists hiv_monthly_report_dataset_0;
 				create temporary table hiv_monthly_report_dataset_0
 
-                (select
+				(select 
 					concat(date_format(endDate,"%Y%m"),person_id) as elastic_id,
 					endDate,
                     encounter_id,
@@ -731,8 +730,8 @@ SET @dyn_sql=CONCAT('delete t1 from hiv_monthly_report_dataset_v1_2 t1 join ',@q
 						else 0
 					end as travelled_outside_last_12_months,
                     
-                    t2.country_of_residence
-                    
+                    t2.country_of_residence,
+
 					case
 						when @status="active"
                             AND @age<=15
@@ -768,7 +767,7 @@ SET @dyn_sql=CONCAT('delete t1 from hiv_monthly_report_dataset_v1_2 t1 join ',@q
                         when t2.ovc_exit_date is not null then 1
                         else 0
                     end as exited_from_ovc_this_month
-					
+                    
 					from etl.dates t1
 					join etl.flat_hiv_summary_v15b t2 
 					join amrs.person t3 using (person_id)
@@ -784,7 +783,9 @@ SET @dyn_sql=CONCAT('delete t1 from hiv_monthly_report_dataset_v1_2 t1 join ',@q
 							and t1.endDate between start_date and date_add(now(),interval 2 year)
 					order by person_id, endDate
 				);
+                
                
+
 				set @prev_id = null;
 				set @cur_id = null;
 				set @cur_status = null;
@@ -841,6 +842,7 @@ SET @dyn_sql=CONCAT('delete t1 from hiv_monthly_report_dataset_v1_2 t1 join ',@q
 						then 1
                         else 0
 					end as enrolled_in_ovc_this_month,
+                    
                     case
 						when @prev_id=@cur_id then @prev_location_id := @cur_location_id
                         else @prev_location_id := null
@@ -1097,6 +1099,7 @@ SET @dyn_sql=CONCAT('delete t1 from hiv_monthly_report_dataset_v1_2 t1 join ',@q
 					EXECUTE s1; 
 					DEALLOCATE PREPARE s1;  
 			end if;            
+
 			set @end = now();
             -- not sure why we need last date_created, I've replaced this with @start
 			insert into etl.flat_log values (@start,@last_date_created,@table_version,timestampdiff(second,@start,@end));
